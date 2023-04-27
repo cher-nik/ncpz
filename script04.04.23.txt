@@ -1,0 +1,87 @@
+BiocManager::install("RTCGA.clinical")
+setwd("D:/R/testingsurvan")
+
+library(survminer)
+library(RTCGA.clinical)
+survivalTCGA(BRCA.clinical, OV.clinical,
+             extract.cols = "admin.disease_code") -> BRCAOV.survInfo
+
+library(survival)
+fit <- survfit(Surv(times, patient.vital_status) ~ admin.disease_code,
+               data = BRCAOV.survInfo)
+ggsurvplot(fit, data = BRCAOV.survInfo, risk.table = TRUE)
+
+library(readr)
+CSV_3 <- read_csv("CSV-3.csv", col_types = cols(
+  NAME = col_skip(),
+  NUM = col_skip(), 
+  PII = col_double(), 
+  S100b = col_double(), 
+  GMP = col_double()
+))
+
+fit.1 <- survfit(Surv(PERIOD, DEM) ~ MBIg6,
+               data = CSV_3)
+ggsurvplot(fit.1, data = CSV_3, risk.table = TRUE)
+fit.2 <- survfit(Surv(PERIOD, DEM) ~ COGg,
+                 data = CSV_3)
+ggsurvplot(fit.2, data = CSV_3, risk.table = TRUE)
+
+ggsurvplot(
+  fit.2,                    
+  data = CSV_3,          
+  risk.table = TRUE,     
+  pval = TRUE,           
+  conf.int = F,       
+  xlim = c(0,20),  
+  break.time.by = 4,     
+  ggtheme = theme_minimal(), 
+  risk.table.y.text.col = T,
+  risk.table.y.text = FALSE,
+  title = "Анализ выживаемости пациентов с мягким когнитивным снижением 
+  \nдо наступления деменции",
+  xlab = "Время (месяцы)",
+  ylab = "Вероятность выживания",
+  legend.title = "Группы:",
+  legend.labs = c("аМКС", "наМКС")
+)
+
+#################################
+
+CSV_3 <- read_csv("CSV-3.csv", col_types = cols(
+  NAME = col_skip(),
+  SEX = col_factor(levels = c("f", "m")),
+  DEM = col_factor(levels = c("0", "1")), 
+  GROUP = col_factor(levels = c("1", "2", "3")), 
+  FAM = col_factor(levels = c("0", "1","2")), 
+  NUM = col_skip(), 
+  COGg = col_factor(levels = c("1","2")), 
+  PII = col_double(), 
+  S100b = col_double(), 
+  GMP = col_double(), 
+  MBIg10 = col_factor(levels = c("1", "2", "3")), 
+  MBIg6 = col_factor(levels = c("1", "2", "3"))
+))
+
+CSV_3$COGg <- factor(CSV_3$COGg, labels = c('amnestic','non-amnestic'))
+CSV_3$COGg <- relevel(CSV_3$COGg, ref = 'non-amnestic')
+CSV_3$MBIg6 <- factor(CSV_3$MBIg6, labels = c('affective','impulsive','abs'))
+CSV_3$MBIg6 <- relevel(CSV_3$MBIg6, ref = 'abs')
+CSV_3$FAM <- factor(CSV_3$FAM, labels = c('none','1 relative','2 or more relatives'))
+
+
+res.cox <- coxph(Surv(PERIOD, DEM) ~ SEX + COGg + FAM + MBIg6, data=CSV_3)
+summary(res.cox, conf.int = FALSE)
+ggforest(res.cox, data = CSV_3)
+
+res.cox.1 <- coxph(Surv(PERIOD, DEM) ~ MBIa + MBId + MBIi + MBIs + MBIp, data=CSV_3)
+summary(res.cox.1, conf.int = FALSE)
+ggforest(res.cox.1, data = CSV_3)
+
+res.cox.2 <- coxph(Surv(PERIOD, DEM) ~ COGg, data=CSV_3)
+summary(res.cox.2, conf.int = FALSE)
+ggforest(res.cox.2, data = CSV_3)
+
+res.cox.3 <- coxph(Surv(PERIOD, DEM) ~ COGg + AGE, data=CSV_3)
+summary(res.cox.3, conf.int = FALSE)
+ggforest(res.cox.3, data = CSV_3)
