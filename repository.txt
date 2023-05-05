@@ -1,0 +1,286 @@
+#data import#
+
+dataset <- read.csv("totaldata.csv", header = T, sep = ";", dec = ",")
+
+dataset <- readr::read_csv("CSV-3.csv", col_types = cols(
+  NAME = col_skip(),
+  SEX = col_factor(levels = c("f", "m")),
+  DEM = col_factor(levels = c("0", "1")), 
+  PII = col_double(), 
+  S100b = col_double()
+))
+
+#data transformation#
+
+x <- as.numeric(sub(",", ".", df$num.as.char, fixed = TRUE))
+df <- subset(raw.df, select = c(1, 2, 40, 41))
+df$a <- factor(df2$x, levels = list("1", "2", "3"))
+df$b <- factor(df2$x, levels = list("f", "m"), labels = c("Female","Male"))
+
+data[is.na(data)] = 0
+data[,c(26,27)] <- na_if((data[,c(26,27)]), 0)
+
+tb <- tidyverse::mutate(tb, a=cut(tb$a, c(-Inf, 13, Inf), labels = c('No', 'Yes')))
+
+CSV_3$COGg <- factor(CSV_3$COGg, labels = c('amnestic','non-amnestic'))
+CSV_3$COGg <- relevel(CSV_3$COGg, ref = 'non-amnestic')
+CSV_3$MBIg6 <- factor(CSV_3$MBIg6, labels = c('affective','impulsive','abs'))
+CSV_3$MBIg6 <- relevel(CSV_3$MBIg6, ref = 'abs')
+
+df %>%
+  tidyverse::mutate_at(vars(PERIOD,
+                 MOCA,
+                 FCSRT1,
+                 FCSRT2,
+                 FCSRT3,
+                 MBIa,
+                 MBId,
+                 MBIi,
+                 MBIs,
+                 MBIp,
+                 MBIt,
+                 GCA,
+                 WML,
+                 MTA,
+                 PCA,
+                 FA),
+            as.integer)
+
+#loops#
+
+ifelse(a > 0, 'positive', 'not positive')
+
+for(i in 1:nrow(dataset))
+  if (dataset$a[i]>x | dataset$b[i]>=y){
+ dataset$c[i] <- '1'
+  } else  dataset$c[i] <- '0'
+
+#plots#
+
+#Edit text
+
+ggpar(p, main = "name",
+      xlab = "name", 
+      ylab = "name",
+      legend.title = "name",
+      caption = "name")
+
+#Density plot
+
+ggdensity(data, x = "x",
+          add = "mean", rug = TRUE,
+          color = "group", fill = "group",
+          palette = c("#00AFBB", "#E7B800"))
+
+#Bar plot
+
+p <- ggplot(na.omit(df), aes(a, fill=group)) +
+  geom_bar(position = "fill")+ 
+  bgcolor("#FFFFFF")+ 
+  grids(linetype = "dashed")
+
+hist(df1$AGE, breaks = 6, xlim = c(60,90), col=rgb(1,0,0,0.5),xlab = "Возраст, лет", ylab = "Количество обследованных", main = "Распределение по возрасту")
+
+plot(factor(df1$SEX, labels = c("Женщины", "Мужчины")), col=rgb(1,0,0,0.5), xlab = "", ylab = "Количество обследованных", ylim = c(0, 55), main = "Распределение по полу")
+
+layout(mat = matrix(c(1,2),2,1, byrow=TRUE),  height = c(1,8)) #to split the screen
+par(mar=c(4, 3.1, 1.1, 2.1))
+hist(df$AGE, breaks = 6, xlim = c(50,90), col=rgb(1,0,0,0.5),xlab = "Возраст, лет",
+     ylab = "Количество обследованных", main = "Распределение по возрасту")
+
+#Box plot + statistics
+
+my_comparisons <- list(c("1", "2"), c("2", "3"), c("1", "3"))
+my_comparisons <- list(c("Female", "Male"))
+p <- ggboxplot(na.omit(df), x = "group", y = "a",
+                color = "group", palette =c("#00AFBB", "#E7B800", "#FC4E07"),
+                add = "jitter", shape = "group")+
+  stat_compare_means(comparisons = my_comparisons, method = "wilcox.test",
+                     symnum.args = list(
+                       cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), 
+                       symbols = c("****", "***", "**", "*", "ns")
+                       )
+                     ) + 
+  stat_compare_means(label.y = 25)
+
+p <- ggboxplot(
+  data, x = group", y = "a", 
+  ylab = "name", xlab = "name", add = "jitter")
+x <- x %>% add_xy_position(x = "group")
+p +
+  stat_pvalue_manual(x, tip.length = 0) +
+  labs(subtitle = get_test_label(x, detailed = TRUE))
+
+
+Violin plot
+
+Scatter-point plot
+
+plot(data$a, data$b, ylab="name", xlab = "name", type = "n",
+     main = "name")
+points(data$a[data$VARIANT==1],
+       data$b[data$VARIANT==1], pch=0)
+points(data$a[data$VARIANT==2],
+       data$b[data$VARIANT==2], pch=1)
+
+
+#statistics#
+
+#Descriptive
+
+psych::describeBy(df2, group = df2$mbi_gr6f)
+
+quantile(dataset$a)
+
+tb_stats <- tb %>%
+  group_by(mbi_gr6f) %>%
+  get_summary_stats(type = "full")
+
+count(df, COGg, MBIg6)
+count(df, AGE<60)
+
+#Pearson's chi-square test
+
+attach(df)
+table(group, a)
+prop.table(table(group, a), 1)
+x <- chisq.test(table(group, a), correct=FALSE)
+
+#Wilcoxon-Mann-Whitney test
+
+wilcox.test(data$a, data$b, alternative = "g", conf.int= T)
+
+x <- tibble %>%
+  rstatix::wilcox_test(a ~ group) %>%
+  add_significance()
+
+x <- subset(tibble, group!="3") %>% 
+  rstatix::wilcox_test(a ~ group) %>%
+  add_significance()
+
+#Effect size
+
+data %>% coin::wilcox_effsize(a ~ GROUP)
+
+#Correlation analysis#
+
+x <- corr.test(x, method = "pearson")
+x$r
+x$p.adj
+
+#linear regression model
+
+df2lm <- lm(FCSRT3~S100b, df2)
+summary(df2lm)
+
+#cluster analysis#
+
+#hierarchical
+
+maxs <- apply(data, 2, max)
+mins <- apply(data, 2, min)
+standart.data <- scale(data, center = mins, scale = maxs - mins)
+dist.data <- dist(standart.data)
+clust.data <- hclust(dist.data, "ward.D")
+
+plot(clust.data, cex = 0.5, axes = F, las = 3, 
+     main='name', 
+     xlab = '', ylab = '') #dendrogram
+rect.hclust(clust.data, k=2, border="red") #no of clusters
+plot(clust.data$height, type = 'b') #scree plot, Cattell
+groups <- cutree(clust.data, k=2)
+colMeans(standart.data[groups==1,])*100
+data$Cluster <- groups
+
+#k-means
+
+summ <- kmeans(standart.data, 3, iter.max = 100) #3 clusters
+wss <- (nrow(standart.data)-1)*sum(apply(standart.data, 2, var))
+for (i in 2:15) {
+  wss[i] <- kmeans(standart.data, 
+                   centers=i)$tot.withinss
+}
+plot(1:15, wss, type="b", xlab="name",
+     ylab="name") 
+
+cex <- 0.2
+plot(standart.data, col="blue", pch=19, main="Iteration 0", cex = cex) 
+
+summ.2 <- kmeans(standart.data, 2, iter.max = 100) #2 clusters
+wss.2 <- (nrow(standart.data)-1)*sum(apply(standart.data, 2, var))
+
+for (i in 2:15) {
+  wss.2[i] <- kmeans(standart.data,centers=i)$tot.withinss
+}
+table(summ$cluster, summ.2$cluster) #for comparison
+
+#data export#
+
+write.csv(data, 'name.csv')
+writexl::write_xlsx(data,"C:\\Users\\Darcy\\Desktop\\name.xlsx")
+
+table1::table1(~a + b + c + d  | GROUP, 
+               data = df, na.rm = TRUE, digits = 2, format.number = TRUE)
+
+
+#Survival analysis#
+
+library(survminer)
+library(survival)
+
+fit <- survfit(Surv(period, outcome) ~ group, data = data)
+ggsurvplot(fit, data = data, risk.table = TRUE) #short
+ggsurvplot(					#long
+  fit,                    
+  data = data,          
+  risk.table = TRUE,     
+  pval = TRUE,           
+  conf.int = F,       
+  xlim = c(0,20),  
+  break.time.by = 4,     
+  ggtheme = theme_minimal(), 
+  risk.table.y.text.col = T,
+  risk.table.y.text = FALSE,
+  title = "name",
+  xlab = "name",
+  ylab = "name",
+  legend.title = "name",
+  legend.labs = c("label", "label")
+)
+
+res.cox <- coxph(Surv(period, outcome) ~ group1 + group2 + group3, data=data)
+summary(res.cox, conf.int = FALSE)
+ggforest(res.cox, data = data)
+
+#ROC & random forest analysis#
+
+library(pROC)
+library(randomForest)
+MBI6 <- df$MBIg6
+MBI10 <- df$MBIg10
+COG <- df1$COGg
+LE <- df1$LE
+
+plot(x=LE,y=COG)
+glm.fit=glm(COG ~ LE, family=binomial)
+lines(LE, glm.fit$fitted.values)
+roc(COG, glm.fit$fitted.values, plot=TRUE)
+roc(COG, glm.fit$fitted.values, plot=TRUE, legacy.axes=TRUE, percent=TRUE, xlab="False Positive Percentage", ylab="True Postive Percentage", col="#377eb8", lwd=4)
+roc.info <- roc(COG, glm.fit$fitted.values, legacy.axes=TRUE)
+str(roc.info)
+roc.df <- data.frame(
+  tpp=roc.info$sensitivities*100, ## tpp = true positive percentage
+  fpp=(1 - roc.info$specificities)*100, ## fpp = false positive precentage
+  thresholds=roc.info$thresholds)
+roc.df[roc.df$tpp > 60 & roc.df$tpp < 80,]
+roc(COG, glm.fit$fitted.values, plot=TRUE, legacy.axes=TRUE, percent=TRUE, xlab="False Positive Percentage", ylab="True Postive Percentage", col="#377eb8", lwd=4, print.auc=TRUE)
+
+rf.model <- randomForest(factor(COG) ~ LE)
+
+## ROC for random forest
+roc(COG, rf.model$votes[,1], plot=TRUE, legacy.axes=TRUE, percent=TRUE, xlab="False Positive Percentage", ylab="True Postive Percentage", col="#4daf4a", lwd=4, print.auc=TRUE)
+roc(COG, glm.fit$fitted.values, plot=TRUE, legacy.axes=TRUE, percent=TRUE, xlab="False Positive Percentage", ylab="True Postive Percentage", col="#377eb8", lwd=4, print.auc=TRUE)
+
+plot.roc(COG, rf.model$votes[,1], percent=TRUE, col="#4daf4a", lwd=4, print.auc=TRUE, add=TRUE, print.auc.y=40)
+legend("bottomright", legend=c("Logisitic Regression", "Random Forest"), col=c("#377eb8", "#4daf4a"), lwd=4)
+par(pty = "m") #in the end
